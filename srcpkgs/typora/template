@@ -1,0 +1,57 @@
+# Template file for 'typora'
+pkgname=typora
+version=1.9.3
+revision=1
+archs="x86_64"
+short_desc="Simple yet powerful Markdown reader"
+maintainer="lintmoth <lintmoth@disroot.org>"
+license="custom:Proprietary"
+homepage="https://typora.io"
+distfiles="https://download.typora.io/linux/Typora-linux-x64.tar.gz"
+checksum=3594e6c00a52270f6f7e32e7f4b42bce5757f9efded6be5042573d7b45cdb03d
+restricted=yes
+nostrip=yes
+repository=nonfree
+
+do_install() {
+	bin="Typora-linux-x64"
+	local pkg_dir="usr/lib/$pkgname"
+
+	mv ${bin}/* .
+
+	chmod +x Typora
+
+	vmkdir ${pkg_dir}
+	for item in \
+		chrome_100_percent.pak \
+		chrome_200_percent.pak \
+		chrome_crashpad_handler \
+		chrome-sandbox \
+		"DO NOT ADD FILES HERE.md" \
+		icudtl.dat \
+		libEGL.so \
+		libffmpeg.so \
+		libGLESv2.so \
+		libvk_swiftshader.so \
+		libvulkan.so.1 \
+		LICENSE \
+		LICENSES.chromium.html \
+		locales \
+		resources \
+		resources.pak \
+		snapshot_blob.bin \
+		Typora \
+		v8_context_snapshot.bin \
+		version \
+		vk_swiftshader_icd.json
+	do
+		vcopy "${item}" "${pkg_dir}"
+	done
+
+	vmkdir usr/bin
+	ln -sfr $DESTDIR/${pkg_dir}/Typora $DESTDIR/usr/bin/typora
+}
+
+post_install() {
+	vlicense LICENSE
+}
